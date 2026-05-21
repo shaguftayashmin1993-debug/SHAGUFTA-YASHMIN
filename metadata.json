@@ -1,0 +1,6 @@
+{
+  "name": "Toddler Learning Garden",
+  "description": "An interactive, sensory-rich educational app for children aged 2-5 focusing on cognitive development, fine motor skills, and executive function.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

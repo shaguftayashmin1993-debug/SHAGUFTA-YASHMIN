@@ -1,4 +1,4 @@
-export type GameType = 'shape-match' | 'bubble-pop' | 'feed-puppy' | 'trace-path';
+export type GameType = 'shape-match' | 'bubble-pop' | 'feed-puppy' | 'trace-path' | 'music-instruments';
 
 export interface Game {
   id: GameType;

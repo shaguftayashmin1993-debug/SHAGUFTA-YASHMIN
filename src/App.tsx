@@ -6,6 +6,7 @@ import GameShapeMatch from './components/GameShapeMatch';
 import GameBubblePop from './components/GameBubblePop';
 import GameFeedPuppy from './components/GameFeedPuppy';
 import GameTracePath from './components/GameTracePath';
+import GameMusicInstruments from './components/GameMusicInstruments';
 import ParentalGate from './components/ParentalGate';
 import ParentsDashboard from './components/ParentsDashboard';
 import { Settings, Volume2, ShieldCheck, Gamepad, Sparkles, Home, ArrowLeft } from 'lucide-react';
@@ -13,43 +14,53 @@ import { Settings, Volume2, ShieldCheck, Gamepad, Sparkles, Home, ArrowLeft } fr
 const GAMES = [
   {
     id: 'shape-match' as GameType,
-    title: 'Shape Match',
-    subtitle: 'Match and Snap!',
-    icon: '⭐',
-    bgColor: 'from-amber-100 to-amber-200/60 hover:from-amber-200 hover:to-amber-300',
-    borderColor: 'border-amber-300 text-amber-700',
-    description: 'Cognitive Logic: Match colors & happy visual shapes!',
+    title: 'Shape Match 🎨',
+    subtitle: 'Match & Snap!',
+    icon: '⭐️',
+    bgColor: 'from-amber-100 via-yellow-100 to-amber-200/80 hover:from-amber-200 hover:to-yellow-200',
+    borderColor: 'border-amber-400 text-amber-800',
+    description: 'Cognitive Logic: Match colors & happy rotating shapes!',
     skills: ['Matching', 'Color recognition', 'Spatial logic']
   },
   {
     id: 'bubble-pop' as GameType,
-    title: 'Bubble Pop',
+    title: 'Bubble Pop 🫧',
     subtitle: 'Tap the bubs!',
-    icon: '🫧',
-    bgColor: 'from-emerald-100 to-emerald-200/60 hover:from-emerald-200 hover:to-emerald-300',
-    borderColor: 'border-emerald-300 text-emerald-700',
-    description: 'Fine Motor skills: Pop cute colorful bubbles!',
+    icon: '🎈',
+    bgColor: 'from-emerald-100 via-teal-100 to-teal-200 border-emerald-400 hover:from-emerald-200 hover:to-teal-200',
+    borderColor: 'border-emerald-400 text-emerald-800',
+    description: 'Fine Motor skills: Pop cute colorful bouncy bubbles!',
     skills: ['Eye-hand coordination', 'Audio play', 'Tapping speed']
   },
   {
     id: 'feed-puppy' as GameType,
-    title: 'Feed Biscuit',
-    subtitle: 'Cute Puppy Step!',
-    icon: '🐕',
-    bgColor: 'from-rose-100 to-rose-200/60 hover:from-rose-200 hover:to-rose-300',
-    borderColor: 'border-rose-300 text-rose-700',
-    description: 'Executive Function: Feed Biscuit, water, & scrub him!',
+    title: 'Feed Biscuit 🐕',
+    subtitle: 'Cute Puppy Care!',
+    icon: '🍪',
+    bgColor: 'from-pink-100 via-rose-100 to-rose-200 border-pink-400 hover:from-pink-200 hover:to-rose-200',
+    borderColor: 'border-pink-400 text-rose-800',
+    description: 'Executive Function: Feed delicious cookies, quench thirst, & groom sweet Biscuit!',
     skills: ['Sequence comprehension', 'Empathy play', 'Drag & drop']
   },
   {
     id: 'trace-path' as GameType,
-    title: 'Duck Trace',
-    subtitle: 'Path Finder!',
+    title: 'Duck Trace 🌊',
+    subtitle: 'Water Trail!',
     icon: '🦆',
-    bgColor: 'from-sky-100 to-sky-200/60 hover:from-sky-200 hover:to-sky-300',
-    borderColor: 'border-sky-300 text-sky-700',
-    description: 'Fine Motor Skills: Help baby duck paddle to mama!',
+    bgColor: 'from-sky-100 via-blue-100 to-indigo-100 hover:from-sky-200 hover:to-indigo-200',
+    borderColor: 'border-sky-400 text-sky-800',
+    description: 'Fine Motor Skills: Help baby duck swim down wavy waters to Mama Duck!',
     skills: ['Path follow', 'Trace discipline', 'Coordination']
+  },
+  {
+    id: 'music-instruments' as GameType,
+    title: 'Music Instruments 🎵',
+    subtitle: 'Play & Mimic!',
+    icon: '🎹',
+    bgColor: 'from-purple-100 via-violet-100 to-indigo-200 border-purple-400 hover:from-purple-200 hover:to-indigo-200',
+    borderColor: 'border-purple-400 text-purple-800',
+    description: 'Sensory Audio: Play Piano, Guitar, Drums, and Violin across cute progressive levels!',
+    skills: ['Musical notes', 'Pitch recognition', 'Rhythm coordination']
   }
 ];
 
@@ -143,14 +154,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF5] text-slate-800 p-4 md:p-6 flex flex-col justify-between relative overflow-x-hidden selection:bg-amber-100 select-none">
+    <div className="min-h-screen bg-gradient-to-tr from-[#FFFDF5] via-[#FFF5E6] to-[#E3F2FD] text-slate-800 p-4 md:p-6 flex flex-col justify-between relative overflow-x-hidden selection:bg-amber-100 select-none">
       
       {/* Decorative Garden Ambient Backdrop Grid */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-1/4 left-10 text-8xl animate-pulse">🌸</div>
+      <div className="absolute inset-0 pointer-events-none opacity-45">
+        <div className="absolute top-1/4 left-10 text-8xl animate-bounce duration-[6s]">🌸</div>
         <div className="absolute top-12 right-20 text-7xl animate-bounce duration-[4s]">🦋</div>
-        <div className="absolute bottom-1/4 right-12 text-8xl animate-pulse">🌼</div>
-        <div className="absolute bottom-12 left-16 text-7xl animate-bounce duration-[5s]">🌈</div>
+        <div className="absolute bottom-1/4 right-12 text-8xl animate-bounce duration-[5s]">🌼</div>
+        <div className="absolute bottom-12 left-16 text-7xl animate-bounce duration-[8s]">🌈</div>
       </div>
 
       {/* HEADER BAR */}
@@ -260,6 +271,9 @@ export default function App() {
               )}
               {activeGame === 'trace-path' && (
                 <GameTracePath onGameComplete={handleGameComplete} onBack={handleBackToGarden} />
+              )}
+              {activeGame === 'music-instruments' && (
+                <GameMusicInstruments onGameComplete={handleGameComplete} onBack={handleBackToGarden} />
               )}
             </motion.div>
 

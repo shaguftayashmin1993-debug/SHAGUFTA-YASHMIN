@@ -191,14 +191,205 @@ class SoundSynth {
       console.warn(e);
     }
   }
+
+  // Plays a beautiful, physical bell/triangle chimed Piano key note with attack-decay envelope
+  playPiano(freq: number) {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.initCtx();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'triangle';
+      osc1.frequency.setValueAtTime(freq, now);
+
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(freq * 2, now); // Warm octave overtone
+
+      gain.gain.setValueAtTime(0.0, now);
+      gain.gain.linearRampToValueAtTime(0.25, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.9);
+      osc2.stop(now + 0.9);
+    } catch (e) {
+      console.warn('piano sound synthesization error', e);
+    }
+  }
+
+  // Plays an acoustic guitar pluck with fast lowpass sweep filter decay
+  playGuitar(freq: number) {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.initCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1500, now);
+      filter.frequency.exponentialRampToValueAtTime(100, now + 0.35);
+
+      gain.gain.setValueAtTime(0.0, now);
+      gain.gain.linearRampToValueAtTime(0.24, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 1.2);
+    } catch (e) {
+      console.warn('guitar sound synthesization error', e);
+    }
+  }
+
+  // Synthesizes realistic toddler-friendly acoustic percussion drums
+  playDrum(type: 'bass' | 'snare' | 'cymbal' | 'hihat') {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.initCtx();
+      const now = ctx.currentTime;
+
+      if (type === 'bass') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.exponentialRampToValueAtTime(32, now + 0.15);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'snare') {
+        // Snare body pitch sweep
+        const osc = ctx.createOscillator();
+        const oscGain = ctx.createGain();
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+        oscGain.gain.setValueAtTime(0.18, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+        osc.connect(oscGain);
+        oscGain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.14);
+
+        // High snap crisp metal resonance
+        const snapOsc = ctx.createOscillator();
+        const snapGain = ctx.createGain();
+        const snapFilter = ctx.createBiquadFilter();
+
+        snapOsc.type = 'triangle';
+        snapOsc.frequency.setValueAtTime(1200, now);
+        snapOsc.frequency.linearRampToValueAtTime(5500, now + 0.08);
+
+        snapFilter.type = 'bandpass';
+        snapFilter.frequency.setValueAtTime(1200, now);
+
+        snapGain.gain.setValueAtTime(0.2, now);
+        snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        snapOsc.connect(snapFilter);
+        snapFilter.connect(snapGain);
+        snapGain.connect(ctx.destination);
+
+        snapOsc.start(now);
+        snapOsc.stop(now + 0.15);
+      } else if (type === 'hihat' || type === 'cymbal') {
+        const duration = type === 'cymbal' ? 0.65 : 0.08;
+        const maxGain = type === 'cymbal' ? 0.15 : 0.08;
+        const baseFreq = type === 'cymbal' ? 7000 : 9500;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(baseFreq, now);
+
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(5500, now);
+
+        gain.gain.setValueAtTime(maxGain, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration + 0.05);
+      }
+    } catch (e) {
+      console.warn('drum play error', e);
+    }
+  }
+
+  // Synthesizes bowed violin strings with expressive vibrato and attack ramps
+  playViolin(freq: number) {
+    if (this.isMuted) return;
+    try {
+      const ctx = this.initCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const vibratoOsc = ctx.createOscillator();
+      const vibratoGain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+
+      // Create warm sliding bow vibrato rate
+      vibratoOsc.frequency.setValueAtTime(5.8, now); // 5.8Hz vibrato sweep
+      vibratoGain.gain.setValueAtTime(freq * 0.015, now); // scale depth based on pitch
+
+      vibratoOsc.connect(vibratoGain);
+      vibratoGain.connect(osc.frequency);
+
+      // Smooth soft attack & long resonant bow-out
+      gain.gain.setValueAtTime(0.0, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.1); // soft starting rise
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.15); // gentle decay
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      vibratoOsc.start(now);
+      osc.start(now);
+
+      vibratoOsc.stop(now + 1.2);
+      osc.stop(now + 1.2);
+    } catch (e) {
+      console.warn('violin play error', e);
+    }
+  }
 }
 
 export const synth = new SoundSynth();
 
-// Speech Synthesis system with queue-cancelling and options targeting toddlers (higher pitch/friendly)
+// Speech Synthesis system with queue-cancelling and options targeting toddlers (pleasant, cheery, soft-spoken female voice)
 class ToddlerSpeech {
   private enabled: boolean = true;
-  private speed: number = 0.78; // Sweet, slow, and extra gentle for toddlers
+  private speed: number = 0.82; // Warm, sweet, cozy and calming pace for young kids
   private currentUtterance: SpeechSynthesisUtterance | null = null;
 
   setEnabled(enabled: boolean) {
@@ -209,8 +400,8 @@ class ToddlerSpeech {
   }
 
   setSpeed(speed: number) {
-    // scale incoming speed gracefully if needed, keeping it sweet & slow
-    this.speed = speed;
+    // Keep it in a very comfortable soft-spoken range (e.g. 0.70 to 0.95 is extremely pleasant)
+    this.speed = Math.max(0.65, Math.min(speed, 1.0));
   }
 
   cancel() {
@@ -224,47 +415,54 @@ class ToddlerSpeech {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
     try {
-      // Cancel previous to maintain focus and avoid chatter overlap
+      // Cancel previous to maintain focus and avoid bubble chatter overlaps from multiple taps
       window.speechSynthesis.cancel();
 
       const utter = new SpeechSynthesisUtterance(text);
       utter.rate = this.speed;
-      utter.pitch = 1.45; // Sweet higher pitch, gentle and loving like a storybook narrator!
+      utter.pitch = 1.20; // 1.2 is cheery, optimistic, and warm (soft-spoken, not mechanical or screechy!)
 
       // Try to find a warm, friendly female or default cute voice in the system
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
-        // Filter voices matching English first (neutral foundation)
-        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        // Filter voices matching English (neutral foundation)
+        const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
         
-        // Match specific names of slow, friendly, sweet English female voices
-        const sweetFemaleVoice = enVoices.find(v => {
-          const name = v.name.toLowerCase();
-          return (
-            name.includes('samantha') || 
-            name.includes('zira') || 
-            name.includes('zoe') || 
-            name.includes('susan') || 
-            name.includes('victoria') || 
-            name.includes('hazel') || 
-            name.includes('karen') ||
-            name.includes('female') || 
-            name.includes('natural')
-          );
-        });
+        // Define high-priority search terms for the most pleasant, cheery, soft-spoken female voices in the system
+        const premiumFemaleVoicePatterns = [
+          'aria',                // Microsoft Aria (Stunning natural, sweet, friendly female)
+          'samantha',            // Apple Samantha (Very cozy, soothing storybook female voice)
+          'google us english',   // Google US English (Standard warm, crystal-clear female voice)
+          'natural',             // Neural natural warm speech voices
+          'zira',                // Microsoft Zira (Classic friendly female)
+          'susan',               // Microsoft Susan
+          'karen',               // Apple Karen (Sweet Australian female)
+          'hazel',               // Microsoft Hazel (Friendly UK female)
+          'victoria',            // Apple Victoria (Clear classic female)
+          'zoe',                 // Apple Zoe
+          'female',              // Specifically designated female speaker
+          'en-us'                // standard US English fallback
+        ];
 
-        // Fallback to any general US English voice (highly neutral native baseline)
-        const usVoice = enVoices.find(v => v.lang.includes('US') || v.lang === 'en-US');
-        
-        // Fallback to any English voice
-        const anyEnVoice = enVoices[0];
+        let selectedVoice: SpeechSynthesisVoice | null = null;
 
-        if (sweetFemaleVoice) {
-          utter.voice = sweetFemaleVoice;
-        } else if (usVoice) {
-          utter.voice = usVoice;
-        } else if (anyEnVoice) {
-          utter.voice = anyEnVoice;
+        // Loop through priorities to find the best matching voice
+        for (const pattern of premiumFemaleVoicePatterns) {
+          const matched = enVoices.find(v => v.name.toLowerCase().includes(pattern));
+          if (matched) {
+            selectedVoice = matched;
+            break;
+          }
+        }
+
+        // Second pass: if no English match found, look in other en-US or any English voices
+        if (!selectedVoice) {
+          const usVoice = enVoices.find(v => v.lang.includes('US') || v.lang === 'en-US');
+          selectedVoice = usVoice || enVoices[0];
+        }
+
+        if (selectedVoice) {
+          utter.voice = selectedVoice;
         }
       }
 

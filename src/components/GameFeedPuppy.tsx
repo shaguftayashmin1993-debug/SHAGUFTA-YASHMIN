@@ -166,6 +166,14 @@ export default function GameFeedPuppy({ onGameComplete, onBack }: GameFeedPuppyP
     if (currentStep !== 2) return;
     setIsAnimateState('scrubbing');
 
+    // Find the sponge element
+    const sponge = document.getElementById('drag-soap-sponge');
+    if (!sponge) return;
+
+    const spongeRect = sponge.getBoundingClientRect();
+    const spongeX = spongeRect.left + spongeRect.width / 2;
+    const spongeY = spongeRect.top + spongeRect.height / 2;
+
     // Sweep across coordinates of mud patch elements
     const spec = LEVEL_SPECS[level];
     const targetSpots = MUD_SPOTS.slice(0, spec.mudSpotsCount);
@@ -177,13 +185,18 @@ export default function GameFeedPuppy({ onGameComplete, onBack }: GameFeedPuppyP
       if (!patch) return;
 
       const patchRect = patch.getBoundingClientRect();
+      const patchX = patchRect.left + patchRect.width / 2;
+      const patchY = patchRect.top + patchRect.height / 2;
+
       const distance = Math.sqrt(
-        Math.pow(info.point.x - (patchRect.left + patchRect.width / 2), 2) +
-        Math.pow(info.point.y - (patchRect.top + patchRect.height / 2), 2)
+        Math.pow(spongeX - patchX, 2) +
+        Math.pow(spongeY - patchY, 2)
       );
 
-      if (distance < 55) {
+      // Very forgiving toddler-and-infant friendly boundary: 80px makes bubble spa super easy to slide-clean
+      if (distance < 80) {
         setMudCleaned((prev) => {
+          if (prev[spot.id] === true) return prev;
           const updated = { ...prev, [spot.id]: true };
           synth.playPop(); // bubble popping bubble foam sound
           
@@ -484,7 +497,7 @@ export default function GameFeedPuppy({ onGameComplete, onBack }: GameFeedPuppyP
                         key={spot.id}
                         id={`mud-patch-${spot.id}`}
                         style={{ top: spot.top, left: spot.left }}
-                        className="absolute w-10.5 h-10.5 bg-amber-800/80 rounded-full flex items-center justify-center border-2 border-amber-950/20 font-mono text-[10px] text-white select-none shadow-xs animate-bounce"
+                        className="absolute w-12 h-12 bg-amber-800/80 rounded-full flex items-center justify-center border-2 border-amber-950/20 font-mono text-[10px] text-white select-none shadow-xs animate-bounce"
                       >
                         💩
                       </div>
